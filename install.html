@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#F4F2EC" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#101116" media="(prefers-color-scheme: dark)" />
+  <title>Install · Speedesk</title>
+  <meta name="description" content="Install Speedesk for offline access." />
+
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("speedesk-theme");
+        if (stored === "light" || stored === "dark" || stored === "system") {
+          document.documentElement.setAttribute("data-theme", stored);
+        } else {
+          document.documentElement.setAttribute("data-theme", "system");
+        }
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "system");
+      }
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0"
+  />
+
+  <link rel="icon" type="image/png" sizes="96x96" href="./favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="shortcut icon" href="./favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="Speedesk" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="./site.webmanifest" />
+
+  <link rel="stylesheet" href="./css/base.css" />
+  <link rel="stylesheet" href="./css/layout.css" />
+  <link rel="stylesheet" href="./css/install.css" />
+</head>
+<body>
+  <div class="install-shell">
+    <header class="install-header">
+      <a class="install-icon-btn" href="./" aria-label="Back to Speedesk">
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+      </a>
+      <h1 class="install-header__title">Install Speedesk</h1>
+    </header>
+
+    <div class="install-card install-card--accent" id="installed-card" hidden>
+      <span class="install-card__title">You're using the installed app</span>
+      <span class="install-card__text">
+        Speedesk is installed on this device and works offline.
+      </span>
+      <a class="install-btn" href="./" style="margin-top: 12px;">
+        <span class="material-symbols-outlined" aria-hidden="true">home</span>
+        Go to home
+      </a>
+    </div>
+
+    <div class="install-card" id="install-action-card" hidden>
+      <span class="install-card__title">Install in one tap</span>
+      <span class="install-card__text">
+        Speedesk works offline once installed. No account, no network needed after first visit.
+      </span>
+      <button type="button" class="install-btn" id="install-btn">
+        <span class="material-symbols-outlined" aria-hidden="true">download</span>
+        Install Speedesk
+      </button>
+    </div>
+
+    <div class="install-card" id="ios-card" hidden>
+      <span class="install-card__title">Install on iPhone or iPad</span>
+      <div class="install-step">
+        <span class="install-step__num">1</span>
+        <span class="install-step__text">
+          Tap the <strong>Share</strong> button in Safari's toolbar.
+        </span>
+      </div>
+      <div class="install-step">
+        <span class="install-step__num">2</span>
+        <span class="install-step__text">
+          Scroll down and tap <strong>Add to Home Screen</strong>.
+        </span>
+      </div>
+      <div class="install-step">
+        <span class="install-step__num">3</span>
+        <span class="install-step__text">
+          Tap <strong>Add</strong>. Speedesk appears on your home screen.
+        </span>
+      </div>
+    </div>
+
+    <div class="install-card" id="android-card" hidden>
+      <span class="install-card__title">Install on Android</span>
+      <div class="install-step">
+        <span class="install-step__num">1</span>
+        <span class="install-step__text">
+          Open Speedesk in Chrome.
+        </span>
+      </div>
+      <div class="install-step">
+        <span class="install-step__num">2</span>
+        <span class="install-step__text">
+          Tap the menu (three dots, top-right), then <strong>Install app</strong>.
+        </span>
+      </div>
+      <div class="install-step">
+        <span class="install-step__num">3</span>
+        <span class="install-step__text">
+          Tap <strong>Install</strong>. Speedesk appears on your home screen.
+        </span>
+      </div>
+    </div>
+
+    <div class="install-card" id="desktop-card" hidden>
+      <span class="install-card__title">Install on desktop</span>
+      <div class="install-step">
+        <span class="install-step__num">1</span>
+        <span class="install-step__text">
+          Look for the install icon in your browser's address bar.
+        </span>
+      </div>
+      <div class="install-step">
+        <span class="install-step__num">2</span>
+        <span class="install-step__text">
+          Click it, then confirm <strong>Install</strong>. Speedesk opens as its own window.
+        </span>
+      </div>
+    </div>
+
+    <p class="install-footer">
+      Speedesk works offline once installed. No account needed.
+    </p>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      const isStandalone = () =>
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
+
+      const isIOS = () =>
+        /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+      const isAndroid = () => /Android/i.test(navigator.userAgent);
+
+      const installedCard = document.getElementById("installed-card");
+      const actionCard = document.getElementById("install-action-card");
+      const iosCard = document.getElementById("ios-card");
+      const androidCard = document.getElementById("android-card");
+      const desktopCard = document.getElementById("desktop-card");
+      const installBtn = document.getElementById("install-btn");
+
+      let deferredPrompt = null;
+
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        showInstallable();
+      });
+
+      installBtn.addEventListener("click", async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        if (outcome === "accepted") {
+          installedCard.hidden = false;
+          actionCard.hidden = true;
+        }
+      });
+
+      window.addEventListener("appinstalled", () => {
+        installedCard.hidden = false;
+        actionCard.hidden = true;
+      });
+
+      function showInstallable() {
+        installedCard.hidden = true;
+        iosCard.hidden = true;
+        androidCard.hidden = true;
+        desktopCard.hidden = true;
+        actionCard.hidden = false;
+      }
+
+      function showFallback() {
+        installedCard.hidden = true;
+        actionCard.hidden = true;
+        iosCard.hidden = !isIOS();
+        androidCard.hidden = isIOS() || !isAndroid();
+        desktopCard.hidden = isIOS() || isAndroid();
+      }
+
+      // Initial state
+      if (isStandalone()) {
+        installedCard.hidden = false;
+        return;
+      }
+
+      // If the browser already gave us a prompt, defer to showInstallable
+      // (it will fire beforeinstallprompt asynchronously). Otherwise, show
+      // the platform-specific fallback after a short delay in case the
+      // prompt event never fires.
+      setTimeout(() => {
+        if (isStandalone()) return;
+        if (deferredPrompt) {
+          showInstallable();
+        } else {
+          showFallback();
+        }
+      }, 800);
+    })();
+  </script>
+</body>
+</html>

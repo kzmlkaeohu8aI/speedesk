@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#F4F2EC" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#101116" media="(prefers-color-scheme: dark)" />
+  <title>Speedesk · Test Planner</title>
+  <meta name="description" content="Speedesk — a lively, friendly way to find any test or chapter." />
+
+  <!-- Favicon set from realfavicongenerator (paths are app-relative) -->
+  <link rel="icon" type="image/png" sizes="96x96" href="./favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="shortcut icon" href="./favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="Speedesk" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="./site.webmanifest" />
+
+  <!-- Theme bootstrap: apply stored theme BEFORE CSS paints, to avoid flash. -->
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem("speedesk-theme");
+        if (stored === "light" || stored === "dark" || stored === "system") {
+          document.documentElement.setAttribute("data-theme", stored);
+        } else {
+          document.documentElement.setAttribute("data-theme", "system");
+        }
+      } catch (e) {
+        document.documentElement.setAttribute("data-theme", "system");
+      }
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0"
+  />
+
+   <link rel="stylesheet" href="./css/base.css?v=14" />
+  <link rel="stylesheet" href="./css/layout.css?v=14" />
+  <link rel="stylesheet" href="./css/components.css?v=14" />
+  <link rel="stylesheet" href="./css/app-look.css?v=14" />
+  <link rel="stylesheet" href="./css/print.css?v=14" media="print" />
+</head>
+<body>
+  <a class="skip-link" href="#list-region">Skip to test list</a>
+
+  <div class="app-shell" id="app-shell">
+    <header class="app-header" role="banner">
+      <div class="app-header__top">
+        <div class="app-header__brand">
+          <div class="app-header__brand-row">
+            <img
+              class="app-header__logo"
+              src="./speedesk-txt-logo.png"
+              alt="Speedesk"
+              width="140"
+              height="36"
+              decoding="async"
+            />
+            <span class="app-header__batch" id="header-batch" aria-label="Batch"></span>
+          </div>
+          <div class="app-header__meta" id="header-date" aria-live="polite">
+            <span class="app-header__day-pill">Today</span>
+            <span class="app-header__date-text">Sun, 25 Oct 2026</span>
+          </div>
+        </div>
+        <div class="app-header__actions">
+          <a
+            class="icon-button"
+            href="./install.html"
+            id="install-link"
+            aria-label="Install Speedesk"
+            title="Install"
+            hidden
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">download</span>
+          </a>
+          <a
+            class="icon-button"
+            href="./calendar.html"
+            aria-label="Open calendar view"
+            title="Calendar"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">calendar_month</span>
+          </a>
+          <div class="theme-switcher" role="group" aria-label="Theme">
+            <button
+              type="button"
+              class="theme-switcher__btn"
+              data-theme-choice="light"
+              aria-label="Light theme"
+              title="Light"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">light_mode</span>
+            </button>
+            <button
+              type="button"
+              class="theme-switcher__btn"
+              data-theme-choice="dark"
+              aria-label="Dark theme"
+              title="Dark"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">dark_mode</span>
+            </button>
+            <button
+              type="button"
+              class="theme-switcher__btn"
+              data-theme-choice="system"
+              aria-label="System theme"
+              title="System"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">contrast</span>
+            </button>
+          </div>
+          <button
+            type="button"
+            class="icon-button"
+            id="refresh-btn"
+            aria-label="Refresh test list"
+            title="Refresh"
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="stat-row" id="stat-row">
+        <div class="stat-tile" id="stat-next">
+          <span class="stat-tile__label">Next test</span>
+          <span class="stat-tile__value" id="stat-next-value">—</span>
+        </div>
+        <div class="stat-tile" id="stat-time">
+          <span class="stat-tile__label">Time left</span>
+          <span class="stat-tile__value" id="stat-time-value">—</span>
+        </div>
+        <div class="stat-tile" id="stat-done">
+          <span class="stat-tile__label">Done</span>
+          <span class="stat-tile__value" id="stat-done-value">— / —</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section class="hero-wrap">
+        <button
+          type="button"
+          class="hero-tile"
+          id="hero-tile"
+          hidden
+          aria-label="Open next test"
+        >
+          <div class="hero-tile__content">
+            <span class="hero-tile__eyebrow">
+              <span id="hero-eyebrow-label">Coming up</span>
+              <span class="hero-tile__eyebrow-extra" id="hero-done-extra" hidden></span>
+            </span>
+            <span class="hero-tile__name" id="hero-name"></span>
+            <span class="hero-tile__countdown" id="hero-countdown"></span>
+          </div>
+          <span class="material-symbols-outlined hero-tile__arrow" aria-hidden="true">arrow_forward</span>
+          <div class="hero-tile__bar"><div class="hero-tile__bar-fill" id="hero-bar-fill"></div></div>
+        </button>
+      </section>
+
+      <section class="controls">
+        <div class="search" role="search">
+          <span class="material-symbols-outlined search__icon" aria-hidden="true">search</span>
+          <input
+            type="search"
+            id="search-input"
+            class="search__input"
+            placeholder="Search test or chapter…"
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+            aria-label="Search test or chapter"
+          />
+          <button
+            type="button"
+            class="search__clear"
+            id="search-clear"
+            aria-label="Clear search"
+            hidden
+          >
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+          </button>
+        </div>
+
+        <div class="filter-row">
+          <button
+            type="button"
+            class="filter-trigger"
+            id="type-trigger"
+            aria-haspopup="listbox"
+            aria-expanded="false"
+            aria-controls="type-menu"
+          >
+            <span class="filter-trigger__label">Type</span>
+            <span class="filter-trigger__value" id="type-value">All</span>
+            <span class="material-symbols-outlined" aria-hidden="true">expand_more</span>
+          </button>
+          <ul
+            class="menu"
+            id="type-menu"
+            role="listbox"
+            aria-label="Filter by test type"
+            tabindex="-1"
+            hidden
+          ></ul>
+
+          <div class="segmented" role="tablist" aria-label="Time scope">
+            <button
+              type="button"
+              class="segmented__btn is-active"
+              id="scope-upcoming"
+              role="tab"
+              aria-selected="true"
+              data-scope="upcoming"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">event_upcoming</span>
+              <span>Upcoming</span>
+            </button>
+            <button
+              type="button"
+              class="segmented__btn"
+              id="scope-all"
+              role="tab"
+              aria-selected="false"
+              data-scope="all"
+            >
+              <span class="material-symbols-outlined" aria-hidden="true">event_busy</span>
+              <span>All</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="split" id="split">
+        <section
+          class="list-pane"
+          id="list-region"
+          aria-label="Tests"
+        >
+          <div class="list" id="list" role="list"></div>
+          <div class="empty" id="empty-state" hidden>
+            <p class="empty__text" id="empty-text">No tests match.</p>
+            <button type="button" class="btn btn--ghost" id="empty-clear">
+              Clear filters
+            </button>
+          </div>
+          <div class="skeleton-list" id="skeleton" hidden>
+            <div class="skeleton-row"></div>
+            <div class="skeleton-row"></div>
+            <div class="skeleton-row"></div>
+            <div class="skeleton-row"></div>
+            <div class="skeleton-row"></div>
+          </div>
+        </section>
+
+        <aside
+          class="detail-pane"
+          id="detail-pane"
+          aria-label="Test details"
+          hidden
+        >
+          <div class="detail" id="detail"></div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <div class="drawer-scrim" id="drawer-scrim" hidden></div>
+  <div
+    class="drawer"
+    id="drawer"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="drawer-title"
+    tabindex="-1"
+    hidden
+  >
+    <div class="drawer__header">
+      <button
+        type="button"
+        class="icon-button"
+        id="drawer-close"
+        aria-label="Close details"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+      </button>
+      <h2 class="drawer__title" id="drawer-title"></h2>
+      <button
+        type="button"
+        class="icon-button drawer__share"
+        id="drawer-share"
+        aria-label="Copy link to this test"
+        title="Copy link"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">share</span>
+      </button>
+      <button
+        type="button"
+        class="icon-button drawer__calendar"
+        id="drawer-calendar"
+        aria-label="Add reminder to calendar"
+        title="Add reminder"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">calendar_add_on</span>
+      </button>
+      <button
+        type="button"
+        class="icon-button drawer__print"
+        id="drawer-print"
+        aria-label="Print this test"
+        title="Print"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">print</span>
+      </button>
+    </div>
+    <div class="drawer__body" id="drawer-body"></div>
+  </div>
+
+  <div class="reminder-scrim" id="reminder-scrim" hidden></div>
+  <div
+    class="reminder-modal"
+    id="reminder-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="reminder-title"
+    hidden
+  >
+    <div class="reminder-modal__header">
+      <h2 class="reminder-modal__title" id="reminder-title">Add reminder</h2>
+      <button
+        type="button"
+        class="icon-button"
+        id="reminder-cancel-x"
+        aria-label="Close reminder dialog"
+      >
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+      </button>
+    </div>
+    <div class="reminder-modal__body">
+      <div class="reminder-row">
+        <span class="reminder-label">Test</span>
+        <div class="reminder-readonly" id="reminder-test-line"></div>
+      </div>
+      <div class="reminder-row">
+        <span class="reminder-label">When</span>
+        <div class="reminder-offsets" id="reminder-offsets"></div>
+      </div>
+      <div class="reminder-row">
+        <span class="reminder-label">Note (optional)</span>
+        <div class="reminder-note-wrap">
+          <textarea
+            id="reminder-note"
+            class="reminder-note"
+            rows="3"
+            maxlength="200"
+            placeholder="e.g. bring formula sheet, revise chapter 5 again"
+          ></textarea>
+          <span class="reminder-counter" id="reminder-counter">0 / 200</span>
+        </div>
+      </div>
+    </div>
+    <div class="reminder-modal__footer">
+      <button type="button" class="btn btn--ghost" id="reminder-cancel">Cancel</button>
+      <button type="button" class="btn btn--primary" id="reminder-confirm">
+        Download .ics
+      </button>
+    </div>
+  </div>
+
+  <div class="snackbar" id="snackbar" role="status" aria-live="polite" hidden>
+    <span class="snackbar__text" id="snackbar-text"></span>
+    <button type="button" class="snackbar__action" id="snackbar-action" hidden></button>
+  </div>
+
+    <script src="./js/config.js?v=14" defer></script>
+  <script src="./js/app-look.js?v=14" defer></script>
+<script src="./js/utils.js?v=14" defer></script>
+<script src="./js/time.js?v=14" defer></script>
+<script src="./js/data.js?v=14" defer></script>
+<script src="./js/filters.js?v=14" defer></script>
+<script src="./js/qr.js?v=14" defer></script>
+<script src="./js/render.js?v=14" defer></script>
+<script src="./js/interactions.js?v=14" defer></script>
+<script src="./js/calendar.js?v=14" defer></script>
+<script src="./js/reminder-modal.js?v=14" defer></script>
+  <script src="./js/main.js?v=14" defer></script>
+  <script>
+    // Show the install icon only if the app isn't already installed.
+    (function () {
+      var link = document.getElementById("install-link");
+      if (!link) return;
+      var standalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
+      if (!standalone) link.hidden = false;
+    })();
+  </script>
+</body>
+</html>

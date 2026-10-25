@@ -1,0 +1,67 @@
+/* test-planner/css/app-look.css
+ *
+ * AppLook — native-feel CSS.
+ * The `img` rule below is scoped so it does not break the header logo
+ * or any icon button that contains an <img>.
+ */
+
+/* Disable blue tap highlight on mobile links. */
+a,
+button,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+}
+
+/* Disable text selection everywhere. */
+body,
+a,
+img,
+input,
+textarea,
+button {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Remove link styling. */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Disable image interactions — except the app logo, which must remain
+   clickable (currently decorative, future "home" link). */
+img {
+  pointer-events: none;
+  user-drag: none;
+  -webkit-user-drag: none;
+}
+img.app-header__logo {
+  pointer-events: auto;
+}
+
+/* Prevent pinch zoom but allow scroll and pull-to-refresh. */
+html,
+body {
+  touch-action: manipulation;
+  overscroll-behavior: auto;
+}
+
+/* Inputs and textareas need to accept typed text — restore selection
+   inside editable fields so the app is usable. */
+input,
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+  -ms-user-select: text;
+  pointer-events: auto;
+}
+
+
+/* Lock pan-zoom on the whole document. touch-action: none would block
+   scrolling too — this keeps scroll but disables pinch. */
+html, body {
+  touch-action: pan-x pan-y;
+}

@@ -1,0 +1,139 @@
+/* test-planner/css/install.css
+ * Styles for install.html. Keeps its own small ruleset so it doesn't
+ * interfere with the main app.
+ */
+
+.install-shell {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: calc(var(--sp-4) + var(--safe-top)) var(--sp-4) var(--sp-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.install-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+}
+.install-header__title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.install-card {
+  padding: var(--sp-4);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.install-card--accent {
+  background: var(--accent-soft);
+  border-color: transparent;
+}
+.install-card__title {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.install-card__text {
+  font-size: 13.5px;
+  color: var(--text-meta);
+  line-height: 1.5;
+}
+
+.install-step {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: flex-start;
+}
+.install-step__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="dark"] .install-step__num,
+  :root[data-theme="system"] .install-step__num {
+    color: #0b1210;
+  }
+}
+.install-step__text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+}
+.install-step__text strong {
+  font-weight: 600;
+}
+
+.install-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 var(--sp-5);
+  border-radius: var(--r-md);
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 14.5px;
+  font-weight: 600;
+  border: 0;
+  cursor: pointer;
+  align-self: flex-start;
+  text-decoration: none;
+}
+.install-btn:hover {
+  background: var(--accent-strong);
+}
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="dark"] .install-btn,
+  :root[data-theme="system"] .install-btn {
+    color: #0b1210;
+  }
+}
+
+.install-btn[hidden] {
+  display: none !important;
+}
+
+.install-footer {
+  margin-top: var(--sp-3);
+  font-size: 12px;
+  color: var(--text-faint);
+  text-align: center;
+}
+
+.install-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+}
+.install-icon-btn:hover {
+  background: var(--surface-hover);
+}

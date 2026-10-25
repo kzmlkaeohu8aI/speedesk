@@ -1,0 +1,316 @@
+/* test-planner/css/base.css */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--bg);
+}
+
+body {
+  min-height: 100dvh;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, p, ul, ol, figure { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+input {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  outline: none;
+}
+a { color: inherit; text-decoration: none; }
+[hidden] { display: none !important; }
+
+.material-symbols-outlined {
+  font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+  font-size: 20px;
+  line-height: 1;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* =========================================================
+ *  THEME SYSTEM
+ *
+ *  Priority order:
+ *    1. [data-theme="light"] / [data-theme="dark"] on <html> → hard override
+ *    2. [data-theme="system"] → follow @media (prefers-color-scheme)
+ *    3. No data-theme (should not happen, but defaults to light)
+ * ========================================================= */
+
+/* ---------- Light (default) ---------- */
+:root,
+:root[data-theme="light"] {
+  color-scheme: light;
+
+  /* canvas */
+  --bg: #F4F2EC;
+  --bg-elevated: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface-hover: #F2EEE5;
+  --surface-active: #EAE4D6;
+
+  /* borders */
+  --border: rgba(24, 20, 15, 0.08);
+  --border-strong: rgba(24, 20, 15, 0.16);
+
+  /* text */
+  --text: #1A1815;
+  --text-muted: #6A625A;
+  --text-faint: #9A918A;
+  --text-meta: #4A443D;
+
+  /* accent (used for focus ring / selection outline only) */
+  --accent: #2F6A55;
+  --accent-strong: #1F4E3E;
+
+  /* ---- SOLID TYPE-COLOR TILES ---- */
+  --tile-part: #E9B949;
+  --tile-part-ink: #3A2A00;
+  --tile-part-hover: #D9A73A;
+
+  --tile-full: #7C6AD6;
+  --tile-full-ink: #FFFFFF;
+  --tile-full-hover: #6A57C4;
+
+  --tile-rbt: #E8694C;
+  --tile-rbt-ink: #FFFFFF;
+  --tile-rbt-hover: #D2593F;
+
+  --tile-aits: #2BA07A;
+  --tile-aits-ink: #FFFFFF;
+  --tile-aits-hover: #1F8B68;
+
+  /* ---- SOLID SUBJECT CHIPS ---- */
+  --pill-physics-bg: #3E7CB1;
+  --pill-physics-ink: #FFFFFF;
+  --pill-physics-saleem-bg: #6A5ACD;
+  --pill-physics-saleem-ink: #FFFFFF;
+  --pill-chemistry-bg: #C0504D;
+  --pill-chemistry-ink: #FFFFFF;
+  --pill-botany-bg: #4F8A3F;
+  --pill-botany-ink: #FFFFFF;
+  --pill-zoology-bg: #B8860B;
+  --pill-zoology-ink: #FFFFFF;
+
+  --danger: #B4695F;
+
+  /* radii */
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-xl: 22px;
+  --r-pill: 999px;
+
+  /* spacing */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+
+  /* z-index */
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-overlay: 900;
+  --z-drawer: 1000;
+  --z-snackbar: 1100;
+
+  /* motion */
+  --t-fast: 0.15s ease;
+  --t-base: 0.2s ease;
+  --t-chill: 0.28s ease;
+
+  /* shadows */
+  --shadow-float: 0 12px 32px rgba(24, 20, 15, 0.14),
+                  0 2px 8px rgba(24, 20, 15, 0.06);
+  --shadow-snack: 0 10px 30px rgba(0, 0, 0, 0.3);
+
+  /* fonts */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* fluid type scale */
+  --fs-header: clamp(22px, 2.2vw + 16px, 30px);
+  --fs-hero: clamp(20px, 1.6vw + 14px, 26px);
+  --fs-detail: clamp(22px, 1.6vw + 16px, 30px);
+  --fs-body: 15px;
+
+  /* safe area */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ---------- Dark (hard override) ---------- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #101116;
+  --bg-elevated: #191A20;
+  --surface: #191A20;
+  --surface-hover: #20222A;
+  --surface-active: #2A2D36;
+
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  --text: #F4F0E8;
+  --text-muted: #AAA39A;
+  --text-faint: #6E685F;
+  --text-meta: #CCC5BA;
+
+  --accent: #7DBE9E;
+  --accent-strong: #A2D8BD;
+
+  --tile-part: #B88A1E;
+  --tile-part-ink: #FFF3D0;
+  --tile-part-hover: #A47A18;
+
+  --tile-full: #5B49B8;
+  --tile-full-ink: #F1ECFF;
+  --tile-full-hover: #4E3DA6;
+
+  --tile-rbt: #B84A32;
+  --tile-rbt-ink: #FFEDE7;
+  --tile-rbt-hover: #A53E28;
+
+  --tile-aits: #1E7A5C;
+  --tile-aits-ink: #E4FFF4;
+  --tile-aits-hover: #196A50;
+
+  --pill-physics-bg: #2E5F8B;
+  --pill-physics-ink: #EAF3FB;
+  --pill-physics-saleem-bg: #4E41A8;
+  --pill-physics-saleem-ink: #F0EDFF;
+  --pill-chemistry-bg: #9A3B39;
+  --pill-chemistry-ink: #FDECEB;
+  --pill-botany-bg: #3A6A2F;
+  --pill-botany-ink: #EBF7E5;
+  --pill-zoology-bg: #8A6508;
+  --pill-zoology-ink: #FCF3DD;
+
+  --danger: #E0938A;
+
+  --shadow-float: 0 14px 36px rgba(0, 0, 0, 0.6),
+                  0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-snack: 0 12px 34px rgba(0, 0, 0, 0.65);
+}
+
+/* ---------- System (follows OS) ---------- */
+:root[data-theme="system"] {
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    color-scheme: dark;
+
+    --bg: #101116;
+    --bg-elevated: #191A20;
+    --surface: #191A20;
+    --surface-hover: #20222A;
+    --surface-active: #2A2D36;
+
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.16);
+
+    --text: #F4F0E8;
+    --text-muted: #AAA39A;
+    --text-faint: #6E685F;
+    --text-meta: #CCC5BA;
+
+    --accent: #7DBE9E;
+    --accent-strong: #A2D8BD;
+
+    --tile-part: #B88A1E;
+    --tile-part-ink: #FFF3D0;
+    --tile-part-hover: #A47A18;
+
+    --tile-full: #5B49B8;
+    --tile-full-ink: #F1ECFF;
+    --tile-full-hover: #4E3DA6;
+
+    --tile-rbt: #B84A32;
+    --tile-rbt-ink: #FFEDE7;
+    --tile-rbt-hover: #A53E28;
+
+    --tile-aits: #1E7A5C;
+    --tile-aits-ink: #E4FFF4;
+    --tile-aits-hover: #196A50;
+
+    --pill-physics-bg: #2E5F8B;
+    --pill-physics-ink: #EAF3FB;
+    --pill-physics-saleem-bg: #4E41A8;
+    --pill-physics-saleem-ink: #F0EDFF;
+    --pill-chemistry-bg: #9A3B39;
+    --pill-chemistry-ink: #FDECEB;
+    --pill-botany-bg: #3A6A2F;
+    --pill-botany-ink: #EBF7E5;
+    --pill-zoology-bg: #8A6508;
+    --pill-zoology-ink: #FCF3DD;
+
+    --danger: #E0938A;
+
+    --shadow-float: 0 14px 36px rgba(0, 0, 0, 0.6),
+                    0 2px 8px rgba(0, 0, 0, 0.35);
+    --shadow-snack: 0 12px 34px rgba(0, 0, 0, 0.65);
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+.t-muted { color: var(--text-muted); }
+.t-faint { color: var(--text-faint); }
+.t-strong { font-weight: 600; }
+.t-small { font-size: 13px; }
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  z-index: var(--z-snackbar);
+  font-size: 14px;
+}
+.skip-link:focus { left: var(--sp-2); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
