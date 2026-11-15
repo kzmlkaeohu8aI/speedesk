@@ -21,6 +21,10 @@ const ASSETS = [
   "./install.html",
   "./offline.html",
   "./site.webmanifest",
+  "./gvsdailytime-wallpaper.html",
+  "./gvsdailytime.html",
+  "./spierverse wallpaper.mp4",
+  "./"
 
   "./css/base.css",
   "./css/layout.css",

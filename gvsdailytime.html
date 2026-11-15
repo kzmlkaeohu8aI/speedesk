@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GVS V1 Operations Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,500,1,0" />
+    <!-- Favicon set from realfavicongenerator (paths are app-relative) -->
+  <link rel="icon" type="image/png" sizes="96x96" href="./favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="shortcut icon" href="./favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+   <link rel="stylesheet" href="./css/app-look.css?v=14" />
+   
+  <meta name="apple-mobile-web-app-title" content="Speedesk" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="./site.webmanifest" />
+
+   <style>
+        :root {
+            /* Corporate Dark Theme */
+            --bg-base: #06070a;
+            --bg-surface: #0e1116;
+            --bg-surface-elevated: #161a22;
+            --bg-surface-hover: #1c212b;
+            
+            --text-primary: #f0f6fc;
+            --text-secondary: #8b949e;
+            --text-muted: #6e7681;
+            
+            --border-subtle: #21262d;
+            --border-strong: #30363d;
+            
+            --accent-brand: #2f81f7;
+            --accent-brand-muted: rgba(47, 129, 247, 0.15);
+            
+            --status-danger: #f85149;
+            --status-success: #2ea043;
+            --status-neutral: #8b949e;
+            
+            --font-main: 'Inter', system-ui, sans-serif;
+            
+            /* Z-Index Scale */
+            --z-base: 10;
+            --z-sticky: 100;
+            --z-overlay: 900;
+            --z-modal: 1000;
+            
+            --transition-fast: 0.15s ease;
+            --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            -webkit-font-smoothing: antialiased;
+            background-image: radial-gradient(circle at 0% 0%, #10141a 0%, transparent 50%);
+        }
+
+        /* Utilities */
+        .icon {
+            font-family: 'Material Symbols Rounded';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .dot.danger { background-color: var(--status-danger); box-shadow: 0 0 8px rgba(248, 81, 73, 0.4); }
+        .dot.success { background-color: var(--status-success); box-shadow: 0 0 8px rgba(46, 160, 67, 0.4); }
+        .dot.neutral { background-color: var(--status-neutral); }
+
+        /* HERO PANEL */
+        .dashboard-hero {
+            padding: 28px 40px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header / Clock */
+        .header-live {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .clock-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .clock-display {
+            font-size: 3.2rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .clock-meridian {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 0;
+        }
+
+        .date-display {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-surface);
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: var(--transition-smooth);
+        }
+
+        /* Main Content */
+        .main-session-display {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .session-label {
+            color: var(--accent-brand);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .session-label .icon {
+            font-size: 16px;
+        }
+
+        .current-session-title {
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -1.5px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            flex-shrink: 0;
+        }
+
+        .current-session-focus {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            margin-bottom: 24px;
+            font-weight: 400;
+            max-width: 85%;
+            flex-shrink: 0;
+        }
+
+        /* Progress Module */
+        .progress-module {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+
+        .progress-metrics {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 12px;
+        }
+
+        .metric-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .metric-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .metric-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .metric-value.highlight {
+            color: var(--accent-brand);
+        }
+
+        .progress-track {
+            height: 6px;
+            background: var(--bg-base);
+            border-radius: 3px;
+            overflow: hidden;
+            border: 1px solid var(--border-strong);
+            position: relative;
+        }
+
+        .progress-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: var(--accent-brand);
+            width: 0%;
+            transition: width 1s linear;
+            border-radius: 3px;
+        }
+
+        /* Data Grid (Context & Rules) */
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            flex-shrink: 0;
+        }
+
+        .info-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border-subtle);
+            padding-bottom: 10px;
+        }
+        
+        .info-card-header .icon {
+            font-size: 16px;
+        }
+
+        .context-blocks {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .context-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .context-item.prev { opacity: 0.5; }
+
+        .context-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .context-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .rule-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .rule-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 0.85rem;
+            line-height: 1.35;
+        }
+
+        .rule-row-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            width: 90px;
+            flex-shrink: 0;
+        }
+
+        .rule-row-value {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* SIDEBAR / TIMELINE */
+        .sidebar-timetable {
+            background: var(--bg-surface);
+            border-left: 1px solid var(--border-strong);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+            z-index: var(--z-base);
+        }
+
+        .sidebar-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-strong);
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-surface);
+            z-index: var(--z-sticky);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .schedule-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Custom Scrollbar */
+        .schedule-list::-webkit-scrollbar { width: 6px; }
+        .schedule-list::-webkit-scrollbar-track { background: transparent; }
+        .schedule-list::-webkit-scrollbar-thumb { 
+            background: var(--border-strong); 
+            border-radius: 4px; 
+        }
+        .schedule-list::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        /* Timeline connecting line */
+        .timeline-track {
+            position: absolute;
+            left: 31px;
+            top: 20px;
+            bottom: 20px;
+            width: 2px;
+            background: var(--border-subtle);
+            z-index: 1;
+        }
+
+        .schedule-item {
+            display: grid;
+            grid-template-columns: 24px 1fr;
+            gap: 14px;
+            padding-bottom: 26px;
+            position: relative;
+            z-index: 2;
+            transition: var(--transition-smooth);
+        }
+
+        .schedule-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-node {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--bg-surface);
+            border: 2px solid var(--border-strong);
+            margin-top: 4px;
+            position: relative;
+            left: 1px;
+            transition: var(--transition-smooth);
+        }
+
+        .schedule-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            opacity: 0.5;
+            transition: var(--transition-smooth);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            margin-top: -8px;
+        }
+
+        .schedule-time {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .schedule-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* Active State */
+        .schedule-item.active .timeline-node {
+            border-color: var(--accent-brand);
+            background: var(--accent-brand);
+            box-shadow: 0 0 0 4px var(--accent-brand-muted);
+        }
+
+        .schedule-item.active .schedule-content {
+            opacity: 1;
+            background: var(--bg-surface-elevated);
+            border-color: var(--border-strong);
+            transform: translateX(4px);
+        }
+
+        .schedule-item.active .schedule-title {
+            color: var(--accent-brand);
+        }
+
+        /* Past State */
+        .schedule-item.past .timeline-node {
+            border-color: var(--border-subtle);
+            background: var(--border-subtle);
+        }
+        
+        .schedule-item.past .schedule-content {
+            opacity: 0.3;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1400px) {
+            .current-session-title { font-size: 2.8rem; }
+            .dashboard-hero { padding: 24px 32px; }
+        }
+        @media (max-width: 1100px) {
+            body { grid-template-columns: 1fr 340px; }
+            .current-session-title { font-size: 2.4rem; }
+            .data-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <main class="dashboard-hero">
+        <header class="header-live">
+            <div class="clock-wrapper">
+                <div class="clock-display">
+                    <span id="live-time-nums">00:00:00</span>
+                    <span class="clock-meridian" id="live-time-meridian">AM</span>
+                </div>
+                <div class="date-display" id="live-date">Loading date...</div>
+            </div>
+            <div class="status-badge" id="system-status">
+                <span class="dot neutral" id="status-dot"></span>
+                <span id="status-text">INITIALIZING</span>
+            </div>
+        </header>
+
+        <section class="main-session-display">
+            <div class="session-label">
+                <span class="icon">adjust</span>
+                CURRENT DIRECTIVE
+            </div>
+            <h1 class="current-session-title" id="current-title">--</h1>
+            <h2 class="current-session-focus" id="current-focus">--</h2>
+
+            <div class="progress-module">
+                <div class="progress-metrics">
+                    <div class="metric-group">
+                        <span class="metric-label">Elapsed</span>
+                        <span class="metric-value" id="time-elapsed">00:00:00</span>
+                    </div>
+                    <div class="metric-group" style="align-items: center;">
+                        <span class="metric-label">Completion</span>
+                        <span class="metric-value highlight" id="progress-percent">0%</span>
+                    </div>
+                    <div class="metric-group" style="align-items: flex-end;">
+                        <span class="metric-label">Remaining</span>
+                        <span class="metric-value" id="time-left">00:00:00</span>
+                    </div>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progress-bar"></div>
+                </div>
+            </div>
+
+            <div class="data-grid">
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <span class="icon">swap_vert</span>
+                        Session Context
+                    </div>
+                    <div class="context-blocks">
+                        <div class="context-item prev">
+                            <span class="context-label">Previous Block</span>
+                            <span class="context-title" id="prev-title">--</span>
+                        </div>
+                        <div class="context-item">
+                            <span class="context-label">Next Block</span>
+                            <span class="context-title" id="next-title">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <div class="info-card-header">
+                        <span class="icon">rule</span>
+                        Operational Rules
+                    </div>
+                    <div class="rule-list" id="rules-container">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <aside class="sidebar-timetable">
+        <div class="sidebar-header">
+            <span class="icon">format_list_bulleted</span>
+            GVS Operations Cadence
+        </div>
+        <div class="schedule-list" id="schedule-list">
+            <div class="timeline-track"></div>
+            <!-- Injected via JS -->
+        </div>
+    </aside>
+
+    <script>
+        // Core Data
+        const scheduleData = [
+            { id: 1, start: '00:00', end: '06:30', title: 'Sleep Phase', focus: 'Hard cutoff. Laptop lid closed. System recovery.', type: 'rest' },
+            { id: 2, start: '06:30', end: '07:00', title: 'Wake Buffer', focus: 'Wake up, hydrate, and prepare for clock-in.', type: 'rest' },
+            { id: 3, start: '07:00', end: '07:15', title: 'Reporting Time', focus: 'Clock in. Sit at the desk. No exceptions.', type: 'work' },
+            { id: 4, start: '07:15', end: '07:30', title: 'Review & Planning', focus: 'Define the day\'s 3 non-negotiable tasks on physical paper.', type: 'work' },
+            { id: 5, start: '07:30', end: '09:00', title: 'Work Session 1', focus: 'Cold start development. Load context, clear easy blockers.', type: 'work' },
+            { id: 6, start: '09:00', end: '10:00', title: 'Morning Routine', focus: 'Breakfast and bath. Complete screen detachment.', type: 'rest' },
+            { id: 7, start: '10:00', end: '13:00', title: 'Work Session 2', focus: 'Core deep work block. Heavy infrastructure lifting.', type: 'work' },
+            { id: 8, start: '13:00', end: '13:45', title: 'Lunch Break', focus: 'Screen break. Nutrition and hydration.', type: 'rest' },
+            { id: 9, start: '13:45', end: '15:45', title: 'Nap Session', focus: 'Mandatory system recharge. No screens.', type: 'rest' },
+            { id: 10, start: '15:45', end: '16:15', title: 'Transition', focus: 'Buffer and physical workspace reset for study mode.', type: 'rest' },
+            { id: 11, start: '16:15', end: '18:15', title: 'Study Session', focus: 'CUET UG prep. Zero GVS work or dev thoughts allowed.', type: 'work' },
+            { id: 12, start: '18:15', end: '18:30', title: 'Transition', focus: 'Buffer to switch mental context back to GVS.', type: 'rest' },
+            { id: 13, start: '18:30', end: '20:30', title: 'Work Session 3', focus: 'Evening development block. Fixes and polishing.', type: 'work' },
+            { id: 14, start: '20:30', end: '21:15', title: 'Dinner Break', focus: 'Screen break.', type: 'rest' },
+            { id: 15, start: '21:15', end: '23:40', title: 'Work Session 4', focus: 'Late shift. Begin winding down active coding at 23:30.', type: 'work' },
+            { id: 16, start: '23:40', end: '24:00', title: 'Final Reporting', focus: 'Digitize logs, push commits, update GAP_LIST.md.', type: 'work' }
+        ];
+
+        // State variables
+        let activeSessionIndex = -1;
+
+        // Utilities
+        function timeToSeconds(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return (hours * 3600) + (minutes * 60);
+        }
+
+        // Compact HMS formatter — omits leading zero-hour segments when hours = 0
+        function formatHMS(totalSeconds) {
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = Math.floor(totalSeconds % 60);
+
+            if (h > 0) {
+                return `${h}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`;
+            }
+            if (m > 0) {
+                return `${m}m ${s.toString().padStart(2, '0')}s`;
+            }
+            return `${s}s`;
+        }
+
+        function formatAMPMDisplay(timeStr) {
+            const [h, m] = timeStr.split(':');
+            let hour = parseInt(h, 10);
+            const ampm = hour >= 12 && hour < 24 ? 'PM' : 'AM';
+            hour = hour % 12;
+            hour = hour ? hour : 12; 
+            return `${hour}:${m} ${ampm}`;
+        }
+
+        const parsedSchedule = scheduleData.map((item) => {
+            const startSec = timeToSeconds(item.start);
+            const endSec = timeToSeconds(item.end === '24:00' ? '23:59:59' : item.end);
+            return { ...item, startSec, endSec };
+        });
+
+        // Initialize DOM Elements
+        function buildSidebar() {
+            const list = document.getElementById('schedule-list');
+            
+            parsedSchedule.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'schedule-item';
+                el.id = `sidebar-item-${item.id}`;
+                
+                const displayEnd = item.end === '24:00' ? '00:00' : item.end;
+                
+                el.innerHTML = `
+                    <div class="timeline-node"></div>
+                    <div class="schedule-content">
+                        <div class="schedule-time">${formatAMPMDisplay(item.start)} - ${formatAMPMDisplay(displayEnd)}</div>
+                        <div class="schedule-title">${item.title}</div>
+                    </div>
+                `;
+                list.appendChild(el);
+            });
+        }
+
+        function updateClockUI(now) {
+            const timeString = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const parts = timeString.split(' ');
+            
+            document.getElementById('live-time-nums').textContent = parts[0];
+            document.getElementById('live-time-meridian').textContent = parts[1];
+            
+            const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const dateEl = document.getElementById('live-date');
+            if (dateEl.textContent !== dateStr) dateEl.textContent = dateStr;
+        }
+
+        function handleSessionChange(currentIndex) {
+            const current = parsedSchedule[currentIndex];
+            const prev = parsedSchedule[currentIndex - 1] || parsedSchedule[15];
+            const next = parsedSchedule[currentIndex + 1] || parsedSchedule[0];
+
+            document.getElementById('current-title').textContent = current.title;
+            document.getElementById('current-focus').textContent = current.focus;
+            document.getElementById('prev-title').textContent = prev.title;
+            document.getElementById('next-title').textContent = next.title;
+
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+            const rulesContainer = document.getElementById('rules-container');
+
+            if (current.type === 'work') {
+                statusText.textContent = "ACTIVE DIRECTIVE";
+                statusDot.className = "dot danger";
+                rulesContainer.innerHTML = `
+                    <div class="rule-row">
+                        <div class="rule-row-label">PROHIBITED</div>
+                        <div class="rule-row-value">YouTube, Social Media, Non-essential platforms</div>
+                    </div>
+                    <div class="rule-row">
+                        <div class="rule-row-label">ALLOWED</div>
+                        <div class="rule-row-value">Ofplay, Spotify, YT Music</div>
+                    </div>
+                `;
+            } else {
+                statusText.textContent = "STANDBY MODE";
+                statusDot.className = "dot neutral";
+                rulesContainer.innerHTML = `
+                    <div class="rule-row">
+                        <div class="rule-row-label">STATUS</div>
+                        <div class="rule-row-value" style="color: var(--text-secondary);">Rest & Recharge Block. Step away from operational tasks.</div>
+                    </div>
+                `;
+            }
+
+            let targetScrollElement = null;
+
+            parsedSchedule.forEach((item, idx) => {
+                const el = document.getElementById(`sidebar-item-${item.id}`);
+                el.classList.remove('active', 'past');
+                
+                if (idx < currentIndex) {
+                    el.classList.add('past');
+                } else if (idx === currentIndex) {
+                    el.classList.add('active');
+                    targetScrollElement = el;
+                }
+            });
+
+            if (targetScrollElement) {
+                const container = document.getElementById('schedule-list');
+                const offset = targetScrollElement.offsetTop - (container.clientHeight / 2) + (targetScrollElement.clientHeight / 2);
+                container.scrollTo({ top: Math.max(0, offset), behavior: 'smooth' });
+            }
+        }
+
+        function tick() {
+            const now = new Date();
+            updateClockUI(now);
+
+            const currentSeconds = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
+            
+            let currentIndex = parsedSchedule.findIndex(item => currentSeconds >= item.startSec && currentSeconds < item.endSec);
+            if (currentIndex === -1 && currentSeconds >= 86399) currentIndex = 15;
+            if (currentIndex === -1) currentIndex = 0;
+
+            const current = parsedSchedule[currentIndex];
+
+            if (currentIndex !== activeSessionIndex) {
+                handleSessionChange(currentIndex);
+                activeSessionIndex = currentIndex;
+            }
+
+            const totalDuration = current.endSec - current.startSec;
+            const elapsed = currentSeconds - current.startSec;
+            const left = current.endSec - currentSeconds;
+            
+            const progressPercent = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+            
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+            document.getElementById('progress-percent').textContent = `${Math.floor(progressPercent)}%`;
+            document.getElementById('time-elapsed').textContent = formatHMS(elapsed);
+            document.getElementById('time-left').textContent = `-${formatHMS(left)}`;
+        }
+
+        // Boot
+        buildSidebar();
+        tick();
+        setInterval(tick, 1000);
+        
+    </script>
+</body>
+</html>

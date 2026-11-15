@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <title>GVS Sci-Fi HUD Wallpaper</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Upgraded Fonts: Rajdhani for the technical HUD look, JetBrains Mono for data -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+     <!-- Favicon set from realfavicongenerator (paths are app-relative) -->
+  <link rel="icon" type="image/png" sizes="96x96" href="./favicon-96x96.png" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="shortcut icon" href="./favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="Speedesk" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="./site.webmanifest" />
+   <link rel="stylesheet" href="./css/app-look.css?v=14" />
+    
+    <style>
+        :root {
+            /* HUD Colors tailored for Spider-Verse neon aesthetic */
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            
+            --hud-cyan: #00f0ff;
+            --hud-cyan-dim: rgba(0, 240, 255, 0.2);
+            --hud-magenta: #ff0055;
+            --hud-green: #00ff88;
+            
+            --font-hud: 'Rajdhani', sans-serif;
+            --font-data: 'JetBrains Mono', monospace;
+            
+            /* Layered shadows for projection effect (dark drop shadow + colored glow) */
+            --glow-cyan: 0 0 12px rgba(0, 240, 255, 0.4);
+            --glow-magenta: 0 0 12px rgba(255, 0, 85, 0.4);
+            --shadow-text: 0 2px 4px rgba(0, 0, 0, 0.8), 0 4px 12px rgba(0, 0, 0, 0.5);
+            --shadow-heavy: 0 4px 8px rgba(0, 0, 0, 0.9), 0 8px 24px rgba(0, 0, 0, 0.6);
+            
+            --transition-smooth: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #000;
+            color: var(--text-primary);
+            font-family: var(--font-hud);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            text-transform: uppercase; /* HUDs are predominantly uppercase */
+        }
+
+        .video-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        /* 
+         * HUD DECORATIONS (Sci-Fi Accents)
+         */
+        .tech-bracket {
+            color: var(--hud-cyan);
+            opacity: 0.7;
+            font-weight: 400;
+            margin: 0 4px;
+        }
+
+        .tech-line {
+            display: inline-block;
+            height: 1px;
+            background: linear-gradient(90deg, var(--hud-cyan), transparent);
+            width: 40px;
+            vertical-align: middle;
+            margin-right: 8px;
+            opacity: 0.6;
+        }
+
+        /* TOP LEFT: Time & Date */
+        .hud-top-left {
+            position: absolute;
+            top: 6vh;
+            left: 4vw;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .time-display {
+            font-family: var(--font-data);
+            font-size: 5.5rem;
+            font-weight: 800;
+            letter-spacing: -3px;
+            line-height: 0.9;
+            text-shadow: var(--shadow-heavy), var(--glow-cyan);
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .time-meridian {
+            font-family: var(--font-hud);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--hud-cyan);
+            letter-spacing: 2px;
+            text-shadow: var(--shadow-text);
+        }
+
+        .date-display {
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 6px;
+            color: var(--text-secondary);
+            text-shadow: var(--shadow-text);
+            padding-left: 6px;
+            display: flex;
+            align-items: center;
+        }
+
+        .date-display::before {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 2px;
+            background: var(--hud-cyan);
+            margin-right: 12px;
+            box-shadow: var(--glow-cyan);
+        }
+
+        /* MID LEFT: Current Session & Progress */
+        .hud-mid-left {
+            position: absolute;
+            top: 40vh;
+            left: 4vw;
+            z-index: 10;
+            width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-shadow: var(--shadow-text);
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            transition: var(--transition-smooth);
+            position: relative;
+        }
+        
+        /* Sci-fi targeting box around the dot */
+        .dot::before {
+            content: '';
+            position: absolute;
+            top: -4px; left: -4px; right: -4px; bottom: -4px;
+            border: 1px solid currentColor;
+            opacity: 0.5;
+        }
+
+        .dot.danger { color: var(--hud-magenta); background-color: var(--hud-magenta); box-shadow: var(--glow-magenta); }
+        .dot.neutral { color: var(--text-muted); background-color: var(--text-muted); }
+
+        .session-title {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 0.9;
+            letter-spacing: 1px;
+            text-shadow: var(--shadow-heavy);
+            border-left: 3px solid var(--hud-cyan);
+            padding-left: 16px;
+            margin-left: 2px;
+        }
+
+        .session-focus {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            text-shadow: var(--shadow-text);
+            margin-bottom: 24px;
+            padding-left: 20px;
+        }
+
+        .progress-module {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            position: relative;
+            box-shadow: var(--shadow-text);
+            /* Segments effect */
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,0.8) 4px, rgba(0,0,0,0.8) 6px);
+            z-index: 1;
+        }
+
+        .progress-fill {
+            position: absolute;
+            top: -1px;
+            left: 0;
+            height: 5px;
+            background: var(--hud-cyan);
+            width: 0%;
+            transition: width 1s linear;
+            box-shadow: var(--glow-cyan);
+            z-index: 0;
+        }
+
+        .progress-metrics {
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-data);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-shadow: var(--shadow-text);
+            letter-spacing: 1px;
+        }
+
+        .metric-highlight {
+            color: var(--hud-cyan);
+            text-shadow: var(--glow-cyan), var(--shadow-text);
+        }
+
+        /* BOTTOM LEFT: Next / Prev Context */
+        .hud-bottom-left {
+            position: absolute;
+            bottom: 8vh;
+            left: 4vw;
+            z-index: 10;
+            display: flex;
+            gap: 48px;
+        }
+
+        .context-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            position: relative;
+            padding-left: 12px;
+            border-left: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .context-item.prev {
+            opacity: 0.4;
+        }
+
+        .context-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--hud-cyan);
+            text-shadow: var(--shadow-text);
+        }
+
+        .context-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-shadow: var(--shadow-text);
+        }
+
+        .context-time {
+            font-family: var(--font-data);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-shadow: var(--shadow-text);
+        }
+
+        /* MID RIGHT: Directives & Rules */
+        .hud-mid-right {
+            position: absolute;
+            top: 40vh;
+            right: 4vw;
+            z-index: 10;
+            width: 360px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .rules-header {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: var(--hud-cyan);
+            text-shadow: var(--shadow-text), var(--glow-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .rules-header::after {
+            content: '';
+            display: inline-block;
+            height: 1px;
+            background: linear-gradient(270deg, var(--hud-cyan), transparent);
+            width: 60px;
+            margin-left: 12px;
+        }
+
+        .rules-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .rule-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            text-align: right;
+            text-shadow: var(--shadow-text);
+            position: relative;
+            padding-right: 16px;
+            border-right: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .rule-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+        }
+
+        .rule-value {
+            font-size: 1.05rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .value-danger { color: var(--hud-magenta); text-shadow: var(--glow-magenta), var(--shadow-text); border-right-color: var(--hud-magenta); }
+        .value-success { color: var(--hud-green); text-shadow: 0 0 12px rgba(0, 255, 136, 0.4), var(--shadow-text); border-right-color: var(--hud-green); }
+    </style>
+</head>
+<body>
+
+    <!-- VIDEO BACKGROUND -->
+    <video class="video-bg" autoplay loop muted playsinline>
+        <source src="spiderman.mp4" type="video/mp4">
+    </video>
+
+    <!-- TOP LEFT -->
+    <div class="hud-top-left">
+        <div class="time-display">
+            <span id="live-time-nums">00:00:00</span>
+            <span class="time-meridian" id="live-time-meridian">AM</span>
+        </div>
+        <div class="date-display" id="live-date">Loading...</div>
+    </div>
+
+    <!-- MID LEFT -->
+    <div class="hud-mid-left">
+        <div class="status-indicator" id="system-status">
+            <span class="dot neutral" id="status-dot"></span>
+            <span id="status-text">SYSTEM STANDBY</span>
+        </div>
+        <h1 class="session-title" id="current-title">--</h1>
+        <h2 class="session-focus" id="current-focus">--</h2>
+
+        <div class="progress-module">
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-bar"></div>
+            </div>
+            <div class="progress-metrics">
+                <span id="time-elapsed">T+ 00:00:00</span>
+                <span class="metric-highlight" id="progress-percent">0.0%</span>
+                <span id="time-left">T- 00:00:00</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM LEFT -->
+    <div class="hud-bottom-left">
+        <div class="context-item prev">
+            <span class="context-label"><span class="tech-bracket">[</span> PREV <span class="tech-bracket">]</span></span>
+            <span class="context-title" id="prev-title">--</span>
+            <span class="context-time" id="prev-time">--:--</span>
+        </div>
+        <div class="context-item">
+            <span class="context-label"><span class="tech-bracket">[</span> NEXT <span class="tech-bracket">]</span></span>
+            <span class="context-title" id="next-title">--</span>
+            <span class="context-time" id="next-time">--:--</span>
+        </div>
+    </div>
+
+    <!-- MID RIGHT -->
+    <div class="hud-mid-right">
+        <div class="rules-header">SYS.DIRECTIVES</div>
+        <div class="rules-container" id="rules-container">
+            <!-- Injected via JS -->
+        </div>
+    </div>
+
+    <!-- LOGIC -->
+    <script>
+        const scheduleData = [
+            { id: 1, start: '00:00', end: '06:30', title: 'Sleep Phase', focus: 'Hard cutoff. System recovery.', type: 'rest' },
+            { id: 2, start: '06:30', end: '07:00', title: 'Wake Buffer', focus: 'Wake up, hydrate, prep for clock-in.', type: 'rest' },
+            { id: 3, start: '07:00', end: '07:15', title: 'Reporting Time', focus: 'Clock in. Desk presence mandatory.', type: 'work' },
+            { id: 4, start: '07:15', end: '07:30', title: 'Review & Plan', focus: 'Define 3 non-negotiable tasks on paper.', type: 'work' },
+            { id: 5, start: '07:30', end: '09:00', title: 'Work Session 1', focus: 'Cold start dev. Clear easy blockers.', type: 'work' },
+            { id: 6, start: '09:00', end: '10:00', title: 'Morning Routine', focus: 'Breakfast, bath. Screen detachment.', type: 'rest' },
+            { id: 7, start: '10:00', end: '13:00', title: 'Work Session 2', focus: 'Core deep work. Infra lifting.', type: 'work' },
+            { id: 8, start: '13:00', end: '13:45', title: 'Lunch Break', focus: 'Screen break. Nutrition/hydration.', type: 'rest' },
+            { id: 9, start: '13:45', end: '15:45', title: 'Nap Session', focus: 'System recharge. No screens.', type: 'rest' },
+            { id: 10, start: '15:45', end: '16:15', title: 'Transition', focus: 'Workspace reset for study mode.', type: 'rest' },
+            { id: 11, start: '16:15', end: '18:15', title: 'Study Session', focus: 'CUET UG prep. Zero GVS dev allowed.', type: 'work' },
+            { id: 12, start: '18:15', end: '18:30', title: 'Transition', focus: 'Mental switch back to GVS.', type: 'rest' },
+            { id: 13, start: '18:30', end: '20:30', title: 'Work Session 3', focus: 'Evening dev. Fixes & polish.', type: 'work' },
+            { id: 14, start: '20:30', end: '21:15', title: 'Dinner Break', focus: 'Screen break.', type: 'rest' },
+            { id: 15, start: '21:15', end: '23:40', title: 'Work Session 4', focus: 'Late shift. Wind down at 23:30.', type: 'work' },
+            { id: 16, start: '23:40', end: '24:00', title: 'Final Report', focus: 'Digitize logs, push commits, update GAP.', type: 'work' }
+        ];
+
+        let activeSessionIndex = -1;
+
+        function timeToSeconds(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return (hours * 3600) + (minutes * 60);
+        }
+
+        // Output format: 00:00:00 (for JetBrains Mono technical feel)
+        function formatTechTime(totalSeconds) {
+            const h = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
+            const m = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
+            const s = Math.floor(totalSeconds % 60).toString().padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        function formatAMPMDisplay(timeStr) {
+            const [h, m] = timeStr.split(':');
+            let hour = parseInt(h, 10);
+            const ampm = hour >= 12 && hour < 24 ? 'PM' : 'AM';
+            hour = hour % 12;
+            hour = hour ? hour : 12; 
+            return `${hour}:${m} ${ampm}`;
+        }
+
+        const parsedSchedule = scheduleData.map((item) => {
+            const startSec = timeToSeconds(item.start);
+            const endSec = timeToSeconds(item.end === '24:00' ? '23:59:59' : item.end);
+            return { ...item, startSec, endSec };
+        });
+
+        function updateClockUI(now) {
+            const timeString = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const parts = timeString.split(' ');
+            
+            document.getElementById('live-time-nums').textContent = parts[0];
+            document.getElementById('live-time-meridian').textContent = parts[1];
+            
+            const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
+            const dateEl = document.getElementById('live-date');
+            if (dateEl.textContent !== dateStr) dateEl.textContent = dateStr;
+        }
+
+        function handleSessionChange(currentIndex) {
+            const current = parsedSchedule[currentIndex];
+            const prev = parsedSchedule[currentIndex - 1] || parsedSchedule[15];
+            const next = parsedSchedule[currentIndex + 1] || parsedSchedule[0];
+
+            document.getElementById('current-title').textContent = current.title;
+            document.getElementById('current-focus').textContent = current.focus;
+            
+            document.getElementById('prev-title').textContent = prev.title;
+            document.getElementById('prev-time').textContent = `${formatAMPMDisplay(prev.start)} - ${formatAMPMDisplay(prev.end === '24:00' ? '00:00' : prev.end)}`;
+            
+            document.getElementById('next-title').textContent = next.title;
+            document.getElementById('next-time').textContent = `${formatAMPMDisplay(next.start)} - ${formatAMPMDisplay(next.end === '24:00' ? '00:00' : next.end)}`;
+
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+            const rulesContainer = document.getElementById('rules-container');
+
+            if (current.type === 'work') {
+                statusText.textContent = "ACTIVE DIRECTIVE";
+                statusText.style.color = "var(--hud-magenta)";
+                statusDot.className = "dot danger";
+                rulesContainer.innerHTML = `
+                    <div class="rule-row value-danger">
+                        <span class="rule-label">Prohibited Signal</span>
+                        <span class="rule-value">YouTube, Social Media</span>
+                    </div>
+                    <div class="rule-row value-success">
+                        <span class="rule-label">Authorized Bandwidth</span>
+                        <span class="rule-value">Ofplay, Spotify, YT Music</span>
+                    </div>
+                `;
+            } else {
+                statusText.textContent = "STANDBY MODE";
+                statusText.style.color = "var(--text-secondary)";
+                statusDot.className = "dot neutral";
+                rulesContainer.innerHTML = `
+                    <div class="rule-row">
+                        <span class="rule-label">System Status</span>
+                        <span class="rule-value" style="color: var(--text-muted);">Rest & Recharge block. Disengage from IDE.</span>
+                    </div>
+                `;
+            }
+        }
+
+        function tick() {
+            const now = new Date();
+            updateClockUI(now);
+
+            const currentSeconds = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
+            
+            let currentIndex = parsedSchedule.findIndex(item => currentSeconds >= item.startSec && currentSeconds < item.endSec);
+            if (currentIndex === -1 && currentSeconds >= 86399) currentIndex = 15;
+            if (currentIndex === -1) currentIndex = 0;
+
+            const current = parsedSchedule[currentIndex];
+
+            if (currentIndex !== activeSessionIndex) {
+                handleSessionChange(currentIndex);
+                activeSessionIndex = currentIndex;
+            }
+
+            const totalDuration = current.endSec - current.startSec;
+            const elapsed = currentSeconds - current.startSec;
+            const left = current.endSec - currentSeconds;
+            
+            const progressPercent = Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+            
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+            document.getElementById('progress-percent').textContent = `${progressPercent.toFixed(1)}%`;
+            document.getElementById('time-elapsed').textContent = `T+ ${formatTechTime(elapsed)}`;
+            document.getElementById('time-left').textContent = `T- ${formatTechTime(left)}`;
+        }
+
+        tick();
+        setInterval(tick, 1000);
+    </script>
+</body>
+</html>
