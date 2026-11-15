@@ -23,7 +23,7 @@ const ASSETS = [
   "./site.webmanifest",
   "./gvsdailytime-wallpaper.html",
   "./gvsdailytime.html",
-  "./spierverse.mp4",
+  "./spiderman.mp4",
   
 
   "./css/base.css",
