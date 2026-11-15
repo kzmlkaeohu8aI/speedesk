@@ -24,7 +24,7 @@ const ASSETS = [
   "./gvsdailytime-wallpaper.html",
   "./gvsdailytime.html",
   "./spierverse wallpaper.mp4",
-  "./"
+  
 
   "./css/base.css",
   "./css/layout.css",
